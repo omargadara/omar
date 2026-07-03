@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة حجز Omar Gadara</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #020617 100%);
+            --glow-color: rgba(99, 102, 241, 0.15);
+            --accent-glow: 0 0 20px rgba(99, 102, 241, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 45px 35px;
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 540px;
+            position: relative;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1e1b4b;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            color: var(--text-muted);
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-dot.active {
+            border-color: #818cf8;
+            background: #4f46e5;
+            color: white;
+            box-shadow: var(--accent-glow);
+            transform: scale(1.1);
+        }
+
+        .step-dot.completed {
+            border-color: #34d399;
+            background: #059669;
+            color: white;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+        }
+
+        .page.active {
+            display: block;
+            animation: cinematicReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cinematicReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-img-container {
+            position: relative;
+            width: 135px;
+            height: 135px;
+            margin: 0 auto 20px auto;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top center;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid #0f172a;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        h1 {
+            font-size: 28px;
+            background: linear-gradient(to left, #ffffff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .academy-tag {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 6px 18px;
+            border-radius: 99px;
+            font-size: 13.5px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 0;
+            width: 40px;
+            height: 3px;
+            background: #6366f1;
+            border-radius: 2px;
+            box-shadow: 0 0 10px #6366f1;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        input[type="text"], input[type="tel"], input[type="file"], select {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+        }
+
+        select option {
+            background: #0f172a;
+            color: white;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            margin-left: 10px;
+            transition: 0.2s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: #4338ca;
+        }
+
+        .checkbox-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .checkbox-card:hover {
+            border-color: rgba(99, 102, 241, 0.6);
+            background: rgba(99, 102, 241, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .checkbox-card input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #6366f1;
+            cursor: pointer;
+        }
+
+        .checkbox-card span {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(79, 70, 229, 0.5);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .payment-box {
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-right: 5px solid #f59e0b;
+            padding: 24px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            font-size: 14.5px;
+            line-height: 1.8;
+            color: #ffedd5;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: #f59e0b;
+            color: #0f172a;
+            padding: 2px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 13.5px;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+        }
+
+        .phone-display {
+            font-size: 26px;
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px dashed rgba(245, 158, 11, 0.4);
+        }
+
+        .copy-hint {
+            font-size: 11px;
+            background: #f59e0b;
+            color: #0f172a;
+            padding: 3px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 0;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+        .copy-hint:hover {
+            transform: scale(1.05);
+        }
+
+        .success-card {
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            color: #10b981;
+            margin-bottom: 20px;
+            animation: scaleGlow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes scaleGlow {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px #10b981); }
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 15.5px;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(34, 197, 94, 0.5);
+        }
+
+        #statusMessage {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 14.5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="stepper" id="formStepper" style="display: none;">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-dot" id="dot3">3</div>
+    </div>
+
+    <!-- الخطوة 1: الواجهة الترحيبية -->
+    <div id="page1" class="page active">
+        <div class="profile-section">
+            <div class="profile-img-container">
+                <img src="https://images2.imgbox.com/fe/2b/XVhliL6r_o.jpg" alt="Omar Gadara" class="profile-img">
+                <span class="verified-badge">✓</span>
+            </div>
+            <h1>Omar Gadara</h1>
+            <div class="academy-tag">🏢 أكاديمية العليدي التعليمية</div>
+            <p style="color: var(--text-muted); font-size: 15.5px; line-height: 1.7; margin-bottom: 12px;">
+                مرحباً بكم في البوابة الرقمية لحجز العام الدراسي الجديد 2026/2027.
+            </p>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.7;">
+                يرجى الانتقال لتأكيد الهوية واختيار الحصص التعليمية المناسبة لكم.
+            </p>
+        </div>
+        <button class="btn" onclick="startBooking()">دخول منصة الحجز 🧭</button>
+    </div>
+
+    <!-- الخطوة 2: بيانات الطالب -->
+    <div id="page2" class="page">
+        <h2>📝 بيانات الطالب الشخصية</h2>
+        <form id="step2Form" onsubmit="event.preventDefault(); goToStep(3);">
+            <div class="form-group">
+                <label>اسم الطالب رباعي:</label>
+                <input type="text" id="studentName" required placeholder="اكتب الاسم كاملاً باللغة العربية">
+            </div>
+            <div class="form-group">
+                <label>النوع (الجنس):</label>
+                <select id="genderSelect" required>
+                    <option value="">اختر النوع...</option>
+                    <option value="ولد">ولد (شباب)</option>
+                    <option value="بنت">بنت (بنات)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>رقم هاتف الطالب:</label>
+                <input type="tel" id="studentPhone" required placeholder="01xxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>رقم هاتف ولي الأمر (واتساب):</label>
+                <input type="tel" id="parentPhone" required placeholder="01xxxxxxxxx">
+            </div>
+            <button type="submit" class="btn">الانتقال لجدول المواعيد ⬅</button>
+        </form>
+    </div>
+
+    <!-- الخطوة 3: الجداول والصفوف -->
+    <div id="page3" class="page">
+        <h2>📅 المادة والمواعيد المتاحة</h2>
+        <form id="step3Form" onsubmit="event.preventDefault(); validateAndNext();">
+            <div class="form-group">
+                <label>اختر الصف الدراسي:</label>
+                <select id="gradeSelect" required onchange="populateSchedules()">
+                    <option value="">اختر صفك الدراسي...</option>
+                    <option value="1ع">الصف الأول الإعدادي</option>
+                    <option value="2ع">الصف الثاني الإعدادي</option>
+                    <option value="3ع">الصف الثالث الإعدادي</option>
+                    <option value="1ث">الصف الأول الثانوي</option>
+                    <option value="2ث">الصف الثاني الثانوي</option>
+                    <option value="3ث">الصف الثالث الثانوي</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>المواعيد والمسارات المتوفرة (يمكنك اختيار متعدد):</label>
+                <div id="checkboxContainer">
+                    <p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 25px 0;">يرجى تحديد الصف الدراسي أولاً لفتح الحصص المتاحة...</p>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">الانتقال لبوابة الدفع ⬅</button>
+        </form>
+    </div>
+
+    <!-- الخطوة 4: تأكيد التحويل المالي -->
+    <div id="page4" class="page">
+        <h2>💳 رسوم جدية وتأكيد الحجز</h2>
+        <div class="payment-box">
+            💰 <b>قيمة رسوم الحجز: <span class="price-badge">50 جنيهاً مصرياً</span></b><br><br>
+            يرجى تحويل الرسوم المحددة إلى محفظة فودافون كاش التالية:
+            <div class="phone-display">
+                <!-- تم تحديث الرقم بالأسفل للرقم الجديد المطلوب -->
+                <span id="phoneNum">01276166547</span>
+                <span class="copy-hint" onclick="copyNumber()">نسخ الرقم</span>
+            </div>
+            بعد التحويل، التقط صورة للإيصال أو شاشة التأكيد ثم قم برفعها بالأسفل لتنشيط الحساب تلقائياً.
+        </div>
+        <form id="step4Form" onsubmit="event.preventDefault(); processRegistration();">
+            <div class="form-group">
+                <label>ارفاق صورة إيصال التحويل المالي:</label>
+                <input type="file" id="paymentReceipt" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn" id="finalSubmitBtn">تأكيد الحجز وإرسال الطلب ✔</button>
+            <div id="statusMessage"></div>
+        </form>
+    </div>
+
+    <!-- الخطوة 5: شاشة النجاح -->
+    <div id="page5" class="page">
+        <div class="success-card">
+            <div class="success-icon">✦</div>
+            <h2 style="border:none; margin-bottom:12px;">تم تسجيل طلبك بنجاح!</h2>
+            <p style="color: var(--text-muted); font-size: 15px; line-height: 1.7;">
+                أهلاً بك في فصول Omar Gadara. تم استلام بياناتك بنجاح وجاري ربط ملفك التعليمي بالمجموعة المقررة.
+            </p>
+            <p style="font-weight: 700; color: #a5b4fc; margin-top: 25px; font-size: 15px;">
+                🚨 الخطوة النهائية: اضغط بالأسفل للانتقال لتأكيد تفعيل الحساب:
+            </p>
+            <div id="whatsappButtonsContainer"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzZK3Pn2v8EHBwWwFjovoI8n7retEJFoy3aLIPh2DArfoI0bXEM_-ec3IvqPfuGjC4Tcw/exec";
+
+    function startBooking() {
+        document.getElementById('formStepper').style.display = 'flex';
+        goToStep(2);
+    }
+
+    function goToStep(stepNumber) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.getElementById('page' + stepNumber).classList.add('active');
+        
+        if(stepNumber >= 2 && stepNumber <= 4) {
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                const currentDotNum = index + 2;
+                if(currentDotNum < stepNumber) {
+                    dot.className = 'step-dot completed';
+                    dot.innerText = '✓';
+                } else if(currentDotNum === stepNumber) {
+                    dot.className = 'step-dot active';
+                    dot.innerText = stepNumber - 1;
+                } else {
+                    dot.className = 'step-dot';
+                    dot.innerText = stepNumber - 1;
+                }
+            });
+        } else if(stepNumber === 5) {
+            document.getElementById('formStepper').style.display = 'none';
+        }
+    }
+
+    function copyNumber() {
+        const phone = document.getElementById('phoneNum').innerText;
+        navigator.clipboard.writeText(phone).then(() => {
+            alert('تم نسخ الرقم الحسابي بنجاح إلى الحافظة.');
+        });
+    }
+
+    function populateSchedules() {
+        const grade = document.getElementById('gradeSelect').value;
+        const container = document.getElementById('checkboxContainer');
+        container.innerHTML = ''; 
+        
+        if (!grade) {
+            container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 25px 0;">يرجى تحديد الصف الدراسي أولاً لفتح الحصص المتاحة...</p>';
+            return;
+        }
+
+        let options = [];
+
+        if (grade === '1ع') {
+            options = [{ id: 'prep1', text: 'الأحد والأربعاء - الساعة 2.5 ظهراً' }];
+        } 
+        else if (grade === '2ع') {
+            options = [
+                { id: 'prep2_1', text: 'الأحد والأربعاء - الساعة 4.0 عصراً' },
+                { id: 'prep2_2', text: 'الإثنين والخميس - الساعة 1.5 ظهراً' }
+            ];
+        } 
+        else if (grade === '3ع') {
+            options = [
+                { id: 'prep3_1', text: 'الأحد والأربعاء - الساعة 1.5 ظهراً' },
+                { id: 'prep3_2', text: 'الأحد والأربعاء - الساعة 5.0 مساءً' }
+            ];
+        } 
+        else if (grade === '1ث') {
+            options = [
+                { id: 'sharia', text: 'الإثنين والخميس - الساعة 2.5 ظهراً (شرعي)' },
+                { id: 'sharia', text: 'الأحد والأربعاء - الساعة 7.0 مساءً (شرعي)' },
+                { id: 'falsafa', text: 'السبت - الساعة 4.0 عصراً (فلسفة ومنطق - مشترك)' },
+                { id: 'adabi', text: 'الثلاثاء - الساعة 2.5 ظهراً (أدبي)' }
+            ];
+        } 
+        else if (grade === '2ث') {
+            options = [
+                { id: 'sharia', text: 'الإثنين والخميس - الساعة 12.0 ظهراً (شرعي)' },
+                { id: 'sharia', text: 'الإثنين والخميس - الساعة 4.0 عصراً (شرعي)' },
+                { id: 'elmnas', text: 'السبت - الساعة 5.0 مساءً (علم نفس - مشترك)' },
+                { id: 'adabi', text: 'الثلاثاء - الساعة 1.5 ظهراً (أدبي)' }
+            ];
+        } 
+        else if (grade === '3ث') {
+            options = [
+                { id: 'sharia', text: 'الأحد والأربعاء - الساعة 12.0 ظهراً' },
+                { id: 'sharia', text: 'الإثنين والخميس - الساعة 6.0 مساءً' },
+                { id: 'adabi', text: 'الثلاثاء - الساعة 12.0 ظهراً (أدبي)' }
+            ];
+        }
+
+        options.forEach(opt => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-card';
+            label.innerHTML = `
+                <input type="checkbox" name="schedules" value="${opt.id}" data-text="${opt.text}">
+                <span>${opt.text}</span>
+            `;
+            container.appendChild(label);
+        });
+    }
+
+    function validateAndNext() {
+        const checkboxes = document.querySelectorAll('input[name="schedules"]:checked');
+        if (checkboxes.length === 0) {
+            alert('يرجى اختيار مادة أو موعد واحد على الأقل للمتابعة!');
+            return;
+        }
+        goToStep(4);
+    }
+
+    function processRegistration() {
+        const finalSubmitBtn = document.getElementById('finalSubmitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        finalSubmitBtn.disabled = true;
+        finalSubmitBtn.innerText = "جاري تشفير ورفع البيانات ماليّاً...";
+        statusMessage.style.color = "#fbbf24";
+        statusMessage.innerText = "يرجى الانتظار، جاري المزامنة الآمنة مع قاعدة الأكاديمية...";
+
+        const fileInput = document.getElementById('paymentReceipt').files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            const base64String = event.target.result.split(',')[1];
+            const mimeType = fileInput.type;
+            
+            const checkboxes = document.querySelectorAll('input[name="schedules"]:checked');
+            let selectedSchedules = [];
+            checkboxes.forEach(cb => {
+                selectedSchedules.push(cb.getAttribute('data-text'));
+            });
+
+            const payload = {
+                studentName: document.getElementById('studentName').value,
+                gender: document.getElementById('genderSelect').value,
+                studentPhone: document.getElementById('studentPhone').value,
+                parentPhone: document.getElementById('parentPhone').value,
+                grade: document.getElementById('gradeSelect').value,
+                schedules: selectedSchedules.join(' // '),
+                imageBuffer: base64String,
+                imageType: mimeType
+            };
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                statusMessage.innerText = "";
+                generateWhatsappButtons();
+            })
+            .catch(err => {
+                statusMessage.style.color = "#ef4444";
+                statusMessage.innerText = "❌ فشل الاتصال بالسيرفر. يرجى إعادة المحاولة الكبس.";
+                console.error(err);
+                finalSubmitBtn.disabled = false;
+                finalSubmitBtn.innerText = "تأكيد الحجز وإرسال الطلب ✔";
+            });
+        };
+
+        if (fileInput) { 
+            reader.readAsDataURL(fileInput); 
+        }
+    }
+
+    function generateWhatsappButtons() {
+        const grade = document.getElementById('gradeSelect').value;
+        const gender = document.getElementById('genderSelect').value;
+        const checkboxes = document.querySelectorAll('input[name="schedules"]:checked');
+        const btnContainer = document.getElementById('whatsappButtonsContainer');
+        
+        btnContainer.innerHTML = ''; 
+        let addedGroups = new Set(); 
+
+        // الرابط الموحد المباشر الخاص بك
+        const directLink = "https://api.whatsapp.com/send/?phone=201276166547";
+
+        checkboxes.forEach(cb => {
+            const type = cb.value; 
+            let title = '';
+
+            if (grade === '1ع') {
+                title = 'تأكيد تفعيل (الأول الإعدادي) 🟢';
+            } else if (grade === '2ع') {
+                title = 'تأكيد تفعيل (الثاني الإعدادي) 🟢';
+            } else if (grade === '3ع') {
+                title = 'تأكيد تفعيل (الثالث الإعدادي) 🟢';
+            } 
+            else if (grade === '1ث') {
+                if (type === 'falsafa') {
+                    title = 'تأكيد تفعيل (فلسفة أولى ثانوي) 🟢';
+                } else {
+                    title = (gender === 'ولد') ? 'تأكيد تفعيل (أولى ثانوي شباب) 🟢' : 'تأكيد تفعيل (أولى ثانوي بنات) 🟢';
+                }
+            } 
+            else if (grade === '2ث') {
+                if (type === 'elmnas') {
+                    title = 'تأكيد تفعيل (علم نفس تانية ثانوي) 🟢';
+                } else {
+                    title = (gender === 'ولد') ? 'تأكيد تفعيل (تانية ثانوي شباب) 🟢' : 'تأكيد تفعيل (تانية ثانوي بنات) 🟢';
+                }
+            } 
+            else if (grade === '3ث') {
+                title = (gender === 'ولد') ? 'تأكيد تفعيل (ثالثة ثانوي شباب) 🟢' : 'تأكيد تفعيل (ثالثة ثانوي بنات) 🟢';
+            }
+
+            if (title && !addedGroups.has(title)) {
+                addedGroups.add(title);
+                const aBtn = document.createElement('a');
+                aBtn.href = directLink;
+                aBtn.target = '_blank';
+                aBtn.className = 'btn-whatsapp';
+                aBtn.innerHTML = `<span>${title}</span>`;
+                btnContainer.appendChild(aBtn);
+            }
+        });
+
+        if (btnContainer.innerHTML === '') {
+            const aBtn = document.createElement('a');
+            aBtn.href = directLink;
+            aBtn.target = '_blank';
+            aBtn.className = 'btn-whatsapp';
+            aBtn.innerHTML = `<span>اضغط هنا لتأكيد تفعيل الحساب وتثبيت الحجز 🟢</span>`;
+            btnContainer.appendChild(aBtn);
+        }
+
+        goToStep(5);
+    }
+</script>
+
+</body>
+</html>
